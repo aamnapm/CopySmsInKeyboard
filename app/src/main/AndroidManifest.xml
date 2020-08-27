@@ -3,6 +3,7 @@
     package="ir.aamnapm.copysmsonkeyboard">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -24,6 +25,8 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".ForegroundService"/>
 
     </application>
 
