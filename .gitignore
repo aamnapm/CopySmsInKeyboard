@@ -12,3 +12,23 @@
 /captures
 .externalNativeBuild
 .cxx
+
+/.idea/
+
+/FirstLesson.iml
+*/target/**
+ *.iml
+
+**/target
+**/*.iml
+
+**/logs
+**/*.log
+/logs/**
+
+
+# System Files
+.DS_Store
+Thumbs.db
+
+/.gitignore
