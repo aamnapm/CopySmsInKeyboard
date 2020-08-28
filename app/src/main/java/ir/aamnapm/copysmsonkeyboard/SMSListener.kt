@@ -15,5 +15,10 @@ class SMSListener : BroadcastReceiver() {
         var clip: ClipData = ClipData.newPlainText("label", msg)
         clipboardManager.setPrimaryClip(clip)
 
+
+        var intent = Intent()
+        intent.putExtra("DATA",msg)
+        intent.action = "SMS"; context.sendBroadcast(intent);
+
     }
 }
