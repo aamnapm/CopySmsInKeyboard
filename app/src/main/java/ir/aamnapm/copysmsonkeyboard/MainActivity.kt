@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.karumi.dexter.Dexter
@@ -14,6 +15,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), PermissionListener {
 
@@ -23,13 +25,22 @@ class MainActivity : AppCompatActivity(), PermissionListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var btnStart = findViewById<Button>(R.id.btnStartService)
+        var btnStop = findViewById<Button>(R.id.btnStopService)
+        var txt = findViewById<TextView>(R.id.txt)
 
-        var btn = findViewById<Button>(R.id.btnStartService)
-        btn.setOnClickListener {
+        btnStart.setOnClickListener {
             Dexter.withContext(this)
                 .withPermission(Manifest.permission.RECEIVE_SMS)
                 .withListener(this)
                 .check();
+        }
+
+        btnStop.setOnClickListener {
+            Intent(this, ForegroundService::class.java).also { intent ->
+                stopService(intent)
+                txt.text = getString(R.string.service_is_not_running)
+            }
         }
 
     }
@@ -41,6 +52,8 @@ class MainActivity : AppCompatActivity(), PermissionListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent)
             } else startService(intent)
+
+            txt.text = getString(R.string.service_is_running)
         }
     }
 
