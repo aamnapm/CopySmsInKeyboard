@@ -13,13 +13,13 @@ import androidx.annotation.RequiresApi
 class ForegroundService : Service() {
 
     lateinit var context: Context
+    lateinit var mSMSReceiver: SMSListener
     lateinit var broadcastReceiver: BroadcastReceiver
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         context = this
-        val input = intent!!.getStringExtra("inputExtra")
 
         var notifcation = Notifcation(context)
 
@@ -28,12 +28,12 @@ class ForegroundService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
-        var notification = notifcation.createNotification(input, pendingIntent)
+        var notification = notifcation.createNotification("", pendingIntent)
         startForeground(1, notification)
 
         onReceiveMessage(notifcation, pendingIntent)
 
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     override fun onCreate() {
@@ -47,12 +47,13 @@ class ForegroundService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        context.unregisterReceiver(mSMSReceiver)
         context.unregisterReceiver(broadcastReceiver)
     }
 
 
     private fun reciveSmsOnService() {
-        val mSMSReceiver = SMSListener()
+        mSMSReceiver = SMSListener()
         val mIntentFilter = IntentFilter()
         mIntentFilter.addAction("android.provider.Telephony.SMS_RECEIVED")
         registerReceiver(mSMSReceiver, mIntentFilter)
