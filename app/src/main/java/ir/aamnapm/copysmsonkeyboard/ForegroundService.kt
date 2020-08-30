@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 
@@ -21,7 +22,7 @@ class ForegroundService : Service() {
 
         context = this
 
-        var notifcation = Notifcation(context)
+        var notifcation = Notification(context)
 
         notifcation.createNotificationChannel()
 
@@ -61,15 +62,22 @@ class ForegroundService : Service() {
 
 
     private fun onReceiveMessage(
-        notification: Notifcation,
+        notification: Notification,
         pendingIntent: PendingIntent
     ) {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 notification.updateNotification(
-                    "رمز " + intent.getStringExtra("DATA"),
+                    getString(R.string.secret) + intent.getStringExtra("DATA"),
                     pendingIntent
                 )
+                var handler = Handler()
+                handler.postDelayed({
+                    notification.updateNotification(
+                        "",
+                        pendingIntent
+                    )
+                }, 120000)
             }
         }
         val mIntentFilter = IntentFilter()
