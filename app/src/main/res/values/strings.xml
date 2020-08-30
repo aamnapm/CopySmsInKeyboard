@@ -4,4 +4,7 @@
     <string name="start_service">start service</string>
     <string name="service_is_running">Service is running...</string>
     <string name="service_is_not_running">Service not running.</string>
+    <string name="sms_reader">پیامک خوان بانک</string>
+    <string name="notification_name">ForegroundServiceChannel</string>
+    <string name="secret">\"رمز \"</string>
 </resources>
