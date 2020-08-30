@@ -1,28 +1,31 @@
 package ir.aamnapm.copysmsonkeyboard
 
+
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
-import androidx.annotation.RequiresApi
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 
 
-class Notifcation(var context: Context) {
+class Notification(private var context: Context) {
 
-    lateinit var manager: NotificationManager
+    private lateinit var manager: NotificationManager
 
-
-    @RequiresApi(Build.VERSION_CODES.M)
     fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,
-                "ForegroundServiceChannel",
+                context.getString(R.string.notification_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
+            serviceChannel.enableLights(true)
+            serviceChannel.lightColor = Color.RED
+
             manager = context.getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
         } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
@@ -34,9 +37,8 @@ class Notifcation(var context: Context) {
     fun updateNotification(message: String, pendingIntent: PendingIntent) {
         manager.notify(
             1, NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("Read Bank Sms")
-                .setContentText(message)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContent(createRemoteView(message))
                 .setContentIntent(pendingIntent)
                 .build()
         )
@@ -44,11 +46,18 @@ class Notifcation(var context: Context) {
 
     fun createNotification(message: String?, pendingIntent: PendingIntent): Notification? {
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Read Bank Sms")
-            .setContentText(message)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContent(createRemoteView(message))
             .setContentIntent(pendingIntent)
             .build()
+    }
+
+    private fun createRemoteView(message: String?): RemoteViews {
+        val contentView = RemoteViews(context.packageName, R.layout.notification)
+        contentView.setImageViewResource(R.id.image, R.mipmap.ic_launcher)
+        contentView.setTextViewText(R.id.title, context.getString(R.string.sms_reader))
+        contentView.setTextViewText(R.id.text, message)
+        return contentView
     }
 
     companion object {
